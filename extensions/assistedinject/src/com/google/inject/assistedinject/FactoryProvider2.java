@@ -253,8 +253,8 @@ final class FactoryProvider2<F>
           continue;
         }
 
-        // Skip default methods that java8 may have created.
-        if (isDefault(method) && (method.isBridge() || method.isSynthetic())) {
+        // Skip default methods
+        if (isDefault(method)) {
           // Even synthetic default methods need the return type validation...
           // unavoidable consequence of javac8. :-(
           validateFactoryReturnType(errors, method.getReturnType(), factoryRawType);
