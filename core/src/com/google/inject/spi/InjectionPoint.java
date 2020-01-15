@@ -279,14 +279,14 @@ public final class InjectionPoint {
       // Disallow private constructors on non-private classes (unless they have @Inject)
       if (Modifier.isPrivate(noArgConstructor.getModifiers())
           && !Modifier.isPrivate(rawType.getModifiers())) {
-        errors.missingConstructor(rawType);
+        errors.missingConstructor(type);
         throw new ConfigurationException(errors.getMessages());
       }
 
       checkForMisplacedBindingAnnotations(noArgConstructor, errors);
       return new InjectionPoint(type, noArgConstructor);
     } catch (NoSuchMethodException e) {
-      errors.missingConstructor(rawType);
+      errors.missingConstructor(type);
       throw new ConfigurationException(errors.getMessages());
     }
   }
@@ -627,9 +627,7 @@ public final class InjectionPoint {
             injectableMethod.method == lastMethod
                 ? lastSignature
                 : new Signature(injectableMethod.method);
-        List<InjectableMethod> methods =
-            bySignature.computeIfAbsent(signature, k -> new ArrayList<>());
-        methods.add(injectableMethod);
+        bySignature.computeIfAbsent(signature, k -> new ArrayList<>()).add(injectableMethod);
       }
     }
   }

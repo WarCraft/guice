@@ -17,7 +17,9 @@
 package com.google.inject.throwingproviders;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static com.google.inject.Asserts.assertContains;
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.common.collect.ImmutableList;
@@ -46,7 +48,6 @@ import com.google.inject.spi.Message;
 import com.google.inject.throwingproviders.ThrowingProviderBinder.Result;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -1376,8 +1377,8 @@ public class CheckedProviderTest extends TestCase {
     } catch (CreationException ce) {
       assertEquals(
           WrongThrowingProviderType.class.getName()
-              + " does not properly extend CheckedProvider, the first type parameter of CheckedProvider "
-              + "(java.lang.String) is not a generic type",
+              + " does not properly extend CheckedProvider, the first type parameter of"
+              + " CheckedProvider (java.lang.String) is not a generic type",
           Iterables.getOnlyElement(ce.getErrorMessages()).getMessage());
     }
   }
@@ -1526,12 +1527,11 @@ public class CheckedProviderTest extends TestCase {
           });
       fail();
     } catch (CreationException ce) {
-      assertEquals(
-          "Could not find a suitable constructor in "
+      assertContains(
+          Iterables.getOnlyElement(ce.getErrorMessages()).getMessage(),
+          "No implementation for "
               + FailingProvider.class.getName()
-              + ". Classes must have either one (and only one) constructor annotated with @Inject"
-              + " or a zero-argument constructor that is not private.",
-          Iterables.getOnlyElement(ce.getErrorMessages()).getMessage());
+              + " (with no qualifier annotation) was bound");
     }
   }
 
@@ -1647,7 +1647,7 @@ public class CheckedProviderTest extends TestCase {
   }
 
   @ScopeAnnotation
-  @Target(ElementType.TYPE)
+  @Target({TYPE, METHOD})
   @Retention(RetentionPolicy.RUNTIME)
   private @interface BadScope {}
 
